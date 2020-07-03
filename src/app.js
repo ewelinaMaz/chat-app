@@ -1,5 +1,9 @@
 "use strict";
-{  
+{
+  const socket = io();
+  socket.connect("http://example.com");
+  socket.on("message", ({ author, content }) => addMessage(author, content));
+
   const loginForm = document.querySelector("#welcome-form");
   const messagesSection = document.querySelector("#messages-section");
   const messagesList = document.querySelector("#messages-list");
@@ -34,7 +38,7 @@
 
     const div = document.createElement("div");
 
-    div.classList.add('message__content');
+    div.classList.add("message__content");
 
     div.innerHTML = content;
 
@@ -48,17 +52,20 @@
 
     messagesList.appendChild(message);
   }
-
   function sendMessage(e) {
     e.preventDefault();
 
-    if (!messageContentInput.value) {
-      alert("enter your message");
+    let messageContent = messageContentInput.value;
+
+    if (!messageContent.length) {
+      alert("You have to type something!");
     } else {
-      addMessage(userName, messageContentInput.value);
+      addMessage(userName, messageContent);
+      socket.emit("message", { author: userName, content: messageContent });
       messageContentInput.value = "";
     }
   }
+
   loginForm.addEventListener("submit", (e) => {
     login(e);
   });
