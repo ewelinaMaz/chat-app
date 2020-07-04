@@ -103,6 +103,10 @@ p {
 .message--self .message__content {
   background: #3498db;
 }
+.message--info .message__content {
+  background: #459865;
+  font-style: italic;
+}
 
 .show {
   display: block;

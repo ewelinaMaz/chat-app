@@ -3,6 +3,8 @@
   const socket = io();
   socket.connect("http://example.com");
   socket.on("message", ({ author, content }) => addMessage(author, content));
+  socket.on('newUser', (user) => addMessage('Chat Bot', user + ' has joined the conversation!'));
+  socket.on('removeUser', (user) => addMessage('Chat Bot', user + ' has left the conversation'));
 
   const loginForm = document.querySelector("#welcome-form");
   const messagesSection = document.querySelector("#messages-section");
@@ -21,6 +23,7 @@
       userName = userNameInput.value;
       loginForm.classList.toggle("show");
       messagesSection.classList.toggle("show");
+      socket.emit('join', userName);
     }
   }
 
@@ -43,8 +46,10 @@
     div.innerHTML = content;
 
     message.classList.add("message", "message--received");
-    if (author === username) {
+    if (author === userName) {
       message.classList.add("message--self");
+    } else if ( author == "Chat Bot") {
+      message.classList.add('message--info');
     }
 
     message.appendChild(heading);
